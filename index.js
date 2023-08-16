@@ -3,13 +3,16 @@ var w, h, tow, toh;
 var x, y, tox, toy;
 var zoom = .01; //zoom step per mouse tick 
 let gameStarted = false;
+let song
 
 
 function preload() {
-    vid = createVideo(
-        ['s/NikoPhilippElenaKat.mp4'], vidLoad
-      )
+    song = loadSound("s/NikoPhilippElenaKat.mp3")
     
+    soundFormats('mp3')
+    vid = createVideo(
+        ['s/NikoPhilippElenaKath264.mp4'], vidLoad
+      )
   }
   
 
@@ -19,9 +22,9 @@ function setup() {
     h = toh = vid.height;
     x = tox = w / 2;
     y = toy = h / 2;
-    button = createButton("Start performance");
-    button.position(windowWidth/2, windowWidth/2);
-    button.mousePressed(() => {gameStarted = true; button.remove(); vid.loop(1); vid.volume(1)});
+    
+    
+    
 
 }
 
@@ -39,13 +42,15 @@ function draw() {
   image(vid, x-w/2, y-h/2, w, h);
   if ((w - x) >= 130 && (w - x) <= 400){
     vid.speed(1)
+    song.rate(1)
     console.log(w - x, 1)
 
   }
   else{
     
-        let spd =  300 / (w - x)
+        let spd = 1 - (((w - x) - 400) / 700) 
         vid.speed(spd)
+        song.rate(spd)
         console.log(w - x, spd)
       
   }
@@ -58,6 +63,15 @@ function draw() {
   
   function vidLoad() {
     vid.hide()
+    button = createButton("Start performance");
+    button.position(windowWidth/2, windowWidth/2);
+    button.mousePressed(() => {
+                            gameStarted = true; 
+                            button.remove(); 
+                            vid.loop(1); 
+                            vid.volume(0)
+                            song.play()
+                        })
     // vid.loop();
     // vid.volume(0);
     
