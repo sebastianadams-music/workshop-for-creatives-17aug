@@ -10,7 +10,6 @@ let zoomChange = zoom/10
 
 function preload() {
     song = loadSound("s/NikoPhilippElenaKat.mp3")
-    
     soundFormats('mp3')
     vid = createVideo(
         ['s/NikoPhilippElenaKath264.mp4'], vidLoad
@@ -20,8 +19,8 @@ function preload() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    w = tow = vid.width;
-    h = toh = vid.height;
+    w = tow = windowWidth;
+    h = toh = windowHeight * 9 / 16;
     x = tox = w / 2;
     y = toy = h / 2;
     
