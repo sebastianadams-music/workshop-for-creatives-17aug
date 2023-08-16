@@ -19,6 +19,7 @@ function preload() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    background(0);
     w = tow = windowWidth;
     h = toh = windowHeight * 9 / 16;
     x = tox = w / 2;
