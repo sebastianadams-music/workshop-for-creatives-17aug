@@ -6,6 +6,7 @@ let gameStarted = false;
 let song
 let zoomCount = 1
 let zoomChange = zoom/10
+let lowPass, highPass
 
 
 function preload() {
@@ -24,6 +25,13 @@ function setup() {
     h = toh = windowHeight * 9 / 16;
     x = tox = w / 2;
     y = toy = h / 2;
+    initialx = x
+    initialy = y
+
+    
+    
+
+
     
     
     
@@ -44,6 +52,21 @@ function draw() {
   image(vid, x-w/2, y-h/2, w, h);
   vid.speed(zoomCount)
   song.rate(zoomCount)
+  console.log(x - initialx)
+  if ((x - initialx) < 0){
+    let hpf = 20 + -8*(x - initialx)
+    hpf = constrain(hpf, 120, 13000)
+    highPass.freq(hpf)
+    // console.log(hpf)
+    lowPass.freq(13000)
+  }
+  else {
+    highPass.freq(120)
+    let lpf = 5000 - 8*(x - initialx)
+    lpf = constrain(lpf, 120, 13000)
+    lowPass.freq(lpf)
+    // console.log(lpf)
+  }
 }
 }
   
@@ -61,7 +84,12 @@ function draw() {
                             
                             vid.loop(1); 
                             vid.volume(0)
+                            lowPass = new p5.LowPass();
+                            highPass = new p5.HighPass();
+                            song.connect(lowPass)
+                            song.connect(highPass)
                             song.play()
+
                         })
     // vid.loop();
     // vid.volume(0);
