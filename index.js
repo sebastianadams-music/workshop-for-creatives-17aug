@@ -48,7 +48,7 @@ function draw() {
   }
   else{
     
-        let spd = 1 - (((w - x) - 400) / 700) 
+        let spd = 1 - (((w - x) - 400) / 1000) 
         vid.speed(spd)
         song.rate(spd)
         console.log(w - x, spd)
