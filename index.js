@@ -4,6 +4,8 @@ var x, y, tox, toy;
 var zoom = .01; //zoom step per mouse tick 
 let gameStarted = false;
 let song
+let zoomCount = 1
+let zoomChange = zoom/10
 
 
 function preload() {
@@ -40,21 +42,9 @@ function draw() {
 
 
   image(vid, x-w/2, y-h/2, w, h);
-  if ((w - x) >= 130 && (w - x) <= 400){
-    vid.speed(1)
-    song.rate(1)
-    console.log(w - x, 1)
-
-  }
-  else{
-    
-        let spd = 1 - (((w - x) - 400) / 1000) 
-        vid.speed(spd)
-        song.rate(spd)
-        console.log(w - x, spd)
-      
-  }
- }
+  vid.speed(zoomCount)
+  song.rate(zoomCount)
+}
 }
   
   function windowResized() {
@@ -93,6 +83,7 @@ function draw() {
         toy -= zoom * (mouseY - toy);
         tow *= zoom+1;
         toh *= zoom+1;
+        zoomCount += zoomChange
       }
     }
     
@@ -103,6 +94,7 @@ function draw() {
         toy += zoom/(zoom+1) * (mouseY - toy);
         toh /= zoom+1;
         tow /= zoom+1;
+        zoomCount -= zoomChange
       }
     }
   }
