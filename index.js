@@ -9,8 +9,8 @@ let zoomChange = zoom/10
 
 
 function preload() {
-    song = loadSound("s/NikoPhilippElenaKat.mp3")
     soundFormats('mp3')
+    song = loadSound("s/NikoPhilippElenaKat.mp3")
     vid = createVideo(
         ['s/NikoPhilippElenaKath264.mp4'], vidLoad
       )
