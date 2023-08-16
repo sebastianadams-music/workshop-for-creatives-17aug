@@ -96,4 +96,6 @@ function draw() {
         zoomCount += zoomChange
       }
     }
+
+    return false
   }
