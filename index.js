@@ -66,8 +66,9 @@ function draw() {
     button = createButton("Start performance");
     button.position(windowWidth/2, windowWidth/2);
     button.mousePressed(() => {
+        button.remove(); 
                             gameStarted = true; 
-                            button.remove(); 
+                            
                             vid.loop(1); 
                             vid.volume(0)
                             song.play()
