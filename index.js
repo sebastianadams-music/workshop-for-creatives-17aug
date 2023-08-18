@@ -46,20 +46,20 @@ function draw() {
   vid.speed(zoomCount)
   song.rate(zoomCount)
   console.log(x - initialx)
-  if ((x - initialx) < 0){
-    let hpf = 20 + -8*(x - initialx)
-    hpf = constrain(hpf, 120, 13000)
-    highPass.freq(hpf)
-    // console.log(hpf)
-    lowPass.freq(13000)
-  }
-  else {
-    highPass.freq(120)
-    let lpf = 5000 - 8*(x - initialx)
-    lpf = constrain(lpf, 120, 13000)
-    lowPass.freq(lpf)
-    // console.log(lpf)
-  }
+  // if ((x - initialx) < 0){
+  //   let hpf = 20 + -8*(x - initialx)
+  //   hpf = constrain(hpf, 120, 13000)
+  //   highPass.freq(hpf)
+  //   // console.log(hpf)
+  //   lowPass.freq(13000)
+  // }
+  // else {
+  //   highPass.freq(120)
+  //   let lpf = 5000 - 8*(x - initialx)
+  //   lpf = constrain(lpf, 120, 13000)
+  //   lowPass.freq(lpf)
+  //   // console.log(lpf)
+  // }
 }
 }
   
@@ -76,7 +76,6 @@ function draw() {
                             gameStarted = true; 
                             document.body.setAttribute("style","-ms-touch-action: none;")
                             document.body.style.pointerEvents = "none";
-                            initmouse()
                             vid.loop(1); 
                             vid.volume(0)
                             lowPass = new p5.LowPass();
