@@ -74,7 +74,9 @@ function draw() {
     button.mousePressed(() => {
         button.remove(); 
                             gameStarted = true; 
-                            
+                            document.body.setAttribute("style","-ms-touch-action: none;")
+                            document.body.style.pointerEvents = "none";
+                            initmouse()
                             vid.loop(1); 
                             vid.volume(0)
                             lowPass = new p5.LowPass();
