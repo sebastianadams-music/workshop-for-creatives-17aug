@@ -1,16 +1,19 @@
 var vid;
 var w, h, tow, toh;
 var x, y, tox, toy;
-var zoom = .01; //zoom step per mouse tick 
+var zoom = .0001; //zoom step per mouse tick 
 let gameStarted = false;
 let song
 let zoomCount = 1
 let zoomChange = zoom/10
 let lowPass, highPass
-// Global vars to cache event state
-const evCache = [];
-let prevDiff = -1;
-let textstatus = "nozoom"
+let textStatusContent = "not set"
+let zoomTouches = []
+let eventDelta = 0
+let lastEventDelta = 0
+let e = 0
+let lasttouchx, lasttouchy
+let introtext
 
 function preload() {
     soundFormats('mp3')
@@ -38,6 +41,8 @@ function draw() {
     background(0);
  if (gameStarted){
 
+  // textStatusContent = "gamestarted"
+
        //tween/smooth motion
   x = lerp(x, tox, .1);
   y = lerp(y, toy, .1);
@@ -48,24 +53,25 @@ function draw() {
   image(vid, x-w/2, y-h/2, w, h);
   vid.speed(zoomCount)
   song.rate(zoomCount)
-  console.log(x - initialx)
-  textSize(64);
-  text(textstatus, 160, 160);
+  // console.log(x - initialx)
+  // textSize(windowWidth/6)
+  // textAlign(CENTER, CENTER)
+  // text(textStatusContent, windowWidth/6, windowWidth/6)
 
-  // if ((x - initialx) < 0){
-  //   let hpf = 20 + -8*(x - initialx)
-  //   hpf = constrain(hpf, 120, 13000)
-  //   highPass.freq(hpf)
-  //   // console.log(hpf)
-  //   lowPass.freq(13000)
-  // }
-  // else {
-  //   highPass.freq(120)
-  //   let lpf = 5000 - 8*(x - initialx)
-  //   lpf = constrain(lpf, 120, 13000)
-  //   lowPass.freq(lpf)
-  //   // console.log(lpf)
-  // }
+
+    // let hpf = 20 + -8*(x - initialx)
+    // hpf = constrain(hpf, 120, 13000)
+    // highPass.freq(hpf)
+    // // console.log(hpf)
+    // lowPass.freq(13000)
+
+    // highPass.freq(120)
+    let filterVal = Math.abs(initialx - tox)
+    bandPass.res(map(filterVal, 1, 200, 1, 4))
+    bandPass.freq(map(tox, -300, 500, 6000, 9000))
+    // let lpf = scaleValue(tox, [-400, 0], [150, 12000])
+    // lowPass.freq(lpf)
+    // console.log(lpf)
 }
 }
   
@@ -75,19 +81,27 @@ function draw() {
   
   function vidLoad() {
     vid.hide()
-    button = createButton("Start performance");
-    button.position(windowWidth/2, windowWidth/2);
+    button = createButton(`Start Performance!
+    (Use your fingers to pan and zoom in the video)`);
+    // color("white")
+    // textAlign(CENTER, CENTER)
+    button.width = windowWidth/3
+    button.position(50, windowHeight/2);
+    
+
+    // center(button)
     button.mousePressed(() => {
-        button.remove(); 
+        button.remove();
                             gameStarted = true; 
-                            document.body.setAttribute("style","-ms-touch-action: none;")
-                            document.body.style.pointerEvents = "none";
+                            
                             vid.loop(1); 
                             vid.volume(0)
-                            lowPass = new p5.LowPass();
-                            highPass = new p5.HighPass();
-                            song.connect(lowPass)
-                            song.connect(highPass)
+                            bandPass = new p5.BandPass()
+                            bandPass.freq(8000)
+                            bandPass.res(1)
+                            // lowPass.freq(100)
+                            song.disconnect()
+                            song.connect(bandPass)
                             song.play()
 
                         })
@@ -100,8 +114,90 @@ function draw() {
     tox += mouseX-pmouseX;
     toy += mouseY-pmouseY;
   }
+
+
+
   
+  function touchStarted() {
+    lasttouchx = touches[0].x
+    lasttouchy = touches[0].y
+    if (touches.length == 2) {//check if two fingers touched screen
+      dist1 = Math.hypot( //get rough estimate of distance between two fingers
+      touches[0].x - touches[1].x,
+      touches[0].y - touches[1].y);
+  }
+  }
+  function touchMoved(event) {
+    // textStatusContent = "touchmoved"
+    // event.preventDefault()
+    
+    // if (touches.length == 1){
+
+      tox += (touches[0].x-lasttouchx)/5;
+      toy += (touches[0].y-lasttouchy)/5;
+      // touchDragged(touches[0].x, touches[0].y, lasttouchx, lasttouchy)
+      lasttouchx = touches[0].x
+      lasttouchy = touches[0].y
+      textStatusContent = Math.round(initialx - tox) // Math.round(zoomCount)
+
+    // }
+
+    if (touches.length == 2){
+
+      var dist2 = Math.hypot( //get rough estimate of new distance between two fingers
+      touches[0].x - touches[1].x,
+      touches[0].y - touches[1].y);
+       
+
+      zoomTouches = [touches[0].y, touches[1].y].sort() 
+      lastEventDelta = eventDelta
+      eventDelta =  - zoomTouches[0] + zoomTouches[1]
+
+      e = eventDelta
+
+      // if (eventDelta > 0) {
+      //   e = 30
+      // }
+      // else{
+      //   e = -30
+      // }
+
+      e = (lastEventDelta - eventDelta)
+      // e = e + (lastEventDelta - eventDelta)
+     
+      // textStatusContent = Math.round(e)
+    
+    if (dist1<dist2) { //zoom in
+      for (var i=0; i<30; i++) {
+        if (tow>30*width) return; //max zoom
+        tox -= zoom * (touches[0].x - tox);
+        toy -= zoom * (touches[0].y - toy);
+        tow *= zoom+1;
+        toh *= zoom+1;
+        zoomCount -= zoomChange
+        textStatusContent = Math.round(initialx - tox) // Math.round(zoomCount)
+      }
+    }
+    
+    if (dist2<dist1) { //zoom out
+      for (var i=0; i<30; i++) {
+        if (tow<width/2) return; //min zoom
+        tox += zoom/(zoom+1) * (touches[0].x - tox); 
+        toy += zoom/(zoom+1) * (touches[0].y - toy);
+        toh /= zoom+1;
+        tow /= zoom+1;
+        zoomCount += zoomChange
+        textStatusContent = Math.round(tox) // Math.round(zoomCount)
+
+      }
+    }
+    }
+
+    return false
+  }
+
   function mouseWheel(event) {
+    event.preventDefault()
     var e = -event.delta;
   
     if (e>0) { //zoom in
@@ -112,6 +208,7 @@ function draw() {
         tow *= zoom+1;
         toh *= zoom+1;
         zoomCount -= zoomChange
+        textStatusContent = "zoom in"
       }
     }
     
@@ -123,133 +220,17 @@ function draw() {
         toh /= zoom+1;
         tow /= zoom+1;
         zoomCount += zoomChange
+        textStatusContent = "zoom out"
+
       }
     }
 
     return false
   }
 
-  // deal with pointer
 
-  function initmouse() {
-    // Install event handlers for the pointer target
-    const el = document.body;
-    el.onpointerdown = pointerdownHandler;
-    el.onpointermove = pointermoveHandler;
-  
-    // Use same handler for pointer{up,cancel,out,leave} events since
-    // the semantics for these events - in this app - are the same.
-    el.onpointerup = pointerupHandler;
-    el.onpointercancel = pointerupHandler;
-    el.onpointerout = pointerupHandler;
-    el.onpointerleave = pointerupHandler;
-  }  
-
-  function pointermoveHandler(ev) {
-    // This function implements a 2-pointer horizontal pinch/zoom gesture.
-    //
-    // If the distance between the two pointers has increased (zoom in),
-    // the target element's background is changed to "pink" and if the
-    // distance is decreasing (zoom out), the color is changed to "lightblue".
-    //
-    // This function sets the target element's border to "dashed" to visually
-    // indicate the pointer's target received a move event.
-
-    textstatus = "pointermove"
-
-    log("pointerMove", ev);
-    ev.target.style.border = "dashed";
-  
-    // Find this event in the cache and update its record with this event
-    const index = evCache.findIndex(
-      (cachedEv) => cachedEv.pointerId === ev.pointerId,
-    );
-    evCache[index] = ev;
-  
-    // If two pointers are down, check for pinch gestures
-    if (evCache.length === 2) {
-      // Calculate the distance between the two pointers
-      const curDiff = Math.abs(evCache[0].clientX - evCache[1].clientX);
-  
-      if (prevDiff > 0) {
-        if (curDiff > prevDiff) {
-          // The distance between the two pointers has increased
-          tox -= zoom * (mouseX - tox);
-          toy -= zoom * (mouseY - toy);
-          tow *= zoom+1;
-          toh *= zoom+1;
-          zoomCount -= zoomChange
-          textstatus = "zoom-in"
-
-        }
-        if (curDiff < prevDiff) {
-          // The distance between the two pointers has decreased
-          tox += zoom/(zoom+1) * (mouseX - tox); 
-          toy += zoom/(zoom+1) * (mouseY - toy);
-          toh /= zoom+1;
-          tow /= zoom+1;
-          zoomCount += zoomChange
-          textstatus = "zoom-out"
-
-        }
-      }
-  
-      // Cache the distance for the next move event
-      prevDiff = curDiff;
-    }
+  function scaleValue(value, from, to) {
+    var scale = (to[1] - to[0]) / (from[1] - from[0]);
+    var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+    return ~~(capped * scale + to[0]);
   }
-
-  function pointerdownHandler(ev) {
-    // The pointerdown event signals the start of a touch interaction.
-    // This event is cached to support 2-finger gestures
-    evCache.push(ev);
-    log("pointerDown", ev);
-  }
-  
-
-  function pointerupHandler(ev) {
-    log(ev.type, ev);
-    // Remove this pointer from the cache and reset the target's
-    // background and border
-    removeEvent(ev);
-    ev.target.style.background = "white";
-    ev.target.style.border = "1px solid black";
-  
-    // If the number of pointers down is less than two then reset diff tracker
-    if (evCache.length < 2) {
-      prevDiff = -1;
-    }
-  }
-  
-  function removeEvent(ev) {
-    // Remove this event from the target's cache
-    const index = evCache.findIndex(
-      (cachedEv) => cachedEv.pointerId === ev.pointerId,
-    );
-    evCache.splice(index, 1);
-  }
-
-  // Log events flag
-let logEvents = false;
-
-// Logging/debugging functions
-function enableLog(ev) {
-  logEvents = !logEvents;
-}
-
-function log(prefix, ev) {
-  if (!logEvents) return;
-  const o = document.getElementsByTagName("output")[0];
-  const s =
-    `${prefix}:<br>` +
-    `  pointerID   = ${ev.pointerId}<br>` +
-    `  pointerType = ${ev.pointerType}<br>` +
-    `  isPrimary   = ${ev.isPrimary}`;
-  o.innerHTML += `${s}<br>`;
-}
-
-function clearLog(event) {
-  const o = document.getElementsByTagName("output")[0];
-  o.innerHTML = "";
-}
-  
