@@ -154,6 +154,9 @@ function draw() {
     //
     // This function sets the target element's border to "dashed" to visually
     // indicate the pointer's target received a move event.
+
+    textstatus = "pointermove"
+
     log("pointerMove", ev);
     ev.target.style.border = "dashed";
   
