@@ -27,13 +27,6 @@ function setup() {
     y = toy = h / 2;
     initialx = x
     initialy = y
-
-    
-    
-
-
-    
-    
     
 
 }
