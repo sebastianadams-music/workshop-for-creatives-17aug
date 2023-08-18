@@ -10,6 +10,7 @@ let lowPass, highPass
 // Global vars to cache event state
 const evCache = [];
 let prevDiff = -1;
+let textstatus = "nozoom"
 
 function preload() {
     soundFormats('mp3')
@@ -48,6 +49,9 @@ function draw() {
   vid.speed(zoomCount)
   song.rate(zoomCount)
   console.log(x - initialx)
+  textSize(64);
+  text(textstatus, 160, 160);
+
   // if ((x - initialx) < 0){
   //   let hpf = 20 + -8*(x - initialx)
   //   hpf = constrain(hpf, 120, 13000)
@@ -172,6 +176,7 @@ function draw() {
           tow *= zoom+1;
           toh *= zoom+1;
           zoomCount -= zoomChange
+          textstatus = "zoom-in"
 
         }
         if (curDiff < prevDiff) {
@@ -181,6 +186,8 @@ function draw() {
           toh /= zoom+1;
           tow /= zoom+1;
           zoomCount += zoomChange
+          textstatus = "zoom-out"
+
         }
       }
   
@@ -210,4 +217,36 @@ function draw() {
       prevDiff = -1;
     }
   }
+  
+  function removeEvent(ev) {
+    // Remove this event from the target's cache
+    const index = evCache.findIndex(
+      (cachedEv) => cachedEv.pointerId === ev.pointerId,
+    );
+    evCache.splice(index, 1);
+  }
+
+  // Log events flag
+let logEvents = false;
+
+// Logging/debugging functions
+function enableLog(ev) {
+  logEvents = !logEvents;
+}
+
+function log(prefix, ev) {
+  if (!logEvents) return;
+  const o = document.getElementsByTagName("output")[0];
+  const s =
+    `${prefix}:<br>` +
+    `  pointerID   = ${ev.pointerId}<br>` +
+    `  pointerType = ${ev.pointerType}<br>` +
+    `  isPrimary   = ${ev.isPrimary}`;
+  o.innerHTML += `${s}<br>`;
+}
+
+function clearLog(event) {
+  const o = document.getElementsByTagName("output")[0];
+  o.innerHTML = "";
+}
   
