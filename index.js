@@ -7,7 +7,9 @@ let song
 let zoomCount = 1
 let zoomChange = zoom/10
 let lowPass, highPass
-
+// Global vars to cache event state
+const evCache = [];
+let prevDiff = -1;
 
 function preload() {
     soundFormats('mp3')
@@ -127,7 +129,7 @@ function draw() {
 
   function initmouse() {
     // Install event handlers for the pointer target
-    const el = document.getElementById("target");
+    const el = document.body;
     el.onpointerdown = pointerdownHandler;
     el.onpointermove = pointermoveHandler;
   
