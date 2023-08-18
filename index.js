@@ -164,11 +164,19 @@ function draw() {
       if (prevDiff > 0) {
         if (curDiff > prevDiff) {
           // The distance between the two pointers has increased
+          tox -= zoom * (mouseX - tox);
+          toy -= zoom * (mouseY - toy);
+          tow *= zoom+1;
+          toh *= zoom+1;
           zoomCount -= zoomChange
 
         }
         if (curDiff < prevDiff) {
           // The distance between the two pointers has decreased
+          tox += zoom/(zoom+1) * (mouseX - tox); 
+          toy += zoom/(zoom+1) * (mouseY - toy);
+          toh /= zoom+1;
+          tow /= zoom+1;
           zoomCount += zoomChange
         }
       }
