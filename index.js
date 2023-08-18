@@ -82,7 +82,8 @@ function draw() {
   function vidLoad() {
     vid.hide()
     button = createButton(`Start Performance!
-    (Use your fingers to pan and zoom in the video)`);
+    (Use your fingers to pan and zoom in the video)
+    [(]works best if you play together with friends]`);
     // color("white")
     // textAlign(CENTER, CENTER)
     button.width = windowWidth/3
