@@ -124,7 +124,7 @@ function draw() {
 
   // deal with pointer
 
-  function init() {
+  function initmouse() {
     // Install event handlers for the pointer target
     const el = document.getElementById("target");
     el.onpointerdown = pointerdownHandler;
@@ -185,3 +185,26 @@ function draw() {
       prevDiff = curDiff;
     }
   }
+
+  function pointerdownHandler(ev) {
+    // The pointerdown event signals the start of a touch interaction.
+    // This event is cached to support 2-finger gestures
+    evCache.push(ev);
+    log("pointerDown", ev);
+  }
+  
+
+  function pointerupHandler(ev) {
+    log(ev.type, ev);
+    // Remove this pointer from the cache and reset the target's
+    // background and border
+    removeEvent(ev);
+    ev.target.style.background = "white";
+    ev.target.style.border = "1px solid black";
+  
+    // If the number of pointers down is less than two then reset diff tracker
+    if (evCache.length < 2) {
+      prevDiff = -1;
+    }
+  }
+  
