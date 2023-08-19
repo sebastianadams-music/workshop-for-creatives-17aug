@@ -18,7 +18,7 @@ let loaded = 0
 let buttonExists = 1
 
 // This fixed it, preferably this would be hidden away though
-document.addEventListener('touchstart', {});
+// document.addEventListener('touchstart', {});
 
 function preload() {
     soundFormats('mp3')
