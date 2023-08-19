@@ -102,7 +102,7 @@ function draw() {
     
     // color("white")
     // textAlign(CENTER, CENTER)
-    // button.width = windowWidth/3
+    button.width = windowWidth/3
     
   }
 
