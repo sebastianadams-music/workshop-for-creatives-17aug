@@ -86,12 +86,9 @@ function draw() {
   
   function vidLoad() {
     vid.hide()
-    button = createButton(`Start Performance!
+    button = createButton(`Start Performance!)
     (Use your fingers to pan and zoom in the video)
     [(]works best if you play together with friends]`);
-    // color("white")
-    // textAlign(CENTER, CENTER)
-    // button.width = windowWidth/3
     button.position(50, windowHeight/2);
     loaded = 1
 
@@ -102,6 +99,10 @@ function draw() {
                         })
     // vid.loop();
     // vid.volume(0);
+    
+    // color("white")
+    // textAlign(CENTER, CENTER)
+    // button.width = windowWidth/3
     
   }
 
