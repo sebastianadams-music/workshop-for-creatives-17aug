@@ -17,10 +17,10 @@ let introtext
 
 function preload() {
     soundFormats('mp3')
-    song = loadSound("s/NikoPhilippElenaKat.mp3")
-    vid = createVideo(
+    song = loadSound("s/NikoPhilippElenaKat.mp3", function(){vid = createVideo(
         ['s/NikoPhilippElenaKath264.mp4'], vidLoad
-      )
+      )})
+    
   }
   
 
