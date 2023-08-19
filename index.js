@@ -208,7 +208,7 @@ function draw() {
         toy -= zoom * (mouseY - toy);
         tow *= zoom+1;
         toh *= zoom+1;
-        zoomCount -= zoomChange
+        zoomCount -= zoomChange * 10
         textStatusContent = "zoom in"
       }
     }
@@ -220,7 +220,7 @@ function draw() {
         toy += zoom/(zoom+1) * (mouseY - toy);
         toh /= zoom+1;
         tow /= zoom+1;
-        zoomCount += zoomChange
+        zoomCount += zoomChange * 10
         textStatusContent = "zoom out"
 
       }
