@@ -14,6 +14,11 @@ let lastEventDelta = 0
 let e = 0
 let lasttouchx, lasttouchy
 let introtext
+let loaded = 0
+let buttonExists = 1
+
+// This fixed it, preferably this would be hidden away though
+document.addEventListener('touchstart', {});
 
 function preload() {
     soundFormats('mp3')
@@ -86,24 +91,13 @@ function draw() {
     [(]works best if you play together with friends]`);
     // color("white")
     // textAlign(CENTER, CENTER)
-    button.width = windowWidth/3
+    // button.width = windowWidth/3
     button.position(50, windowHeight/2);
-    
+    loaded = 1
 
     // center(button)
     button.mousePressed(() => {
-        button.remove();
-                            gameStarted = true; 
-                            
-                            vid.loop(1); 
-                            vid.volume(0)
-                            bandPass = new p5.BandPass()
-                            bandPass.freq(8000)
-                            bandPass.res(1)
-                            // lowPass.freq(100)
-                            song.disconnect()
-                            song.connect(bandPass)
-                            song.play()
+       startButtonPressed()
 
                         })
     // vid.loop();
@@ -120,13 +114,22 @@ function draw() {
 
   
   function touchStarted() {
-    lasttouchx = touches[0].x
+    if (buttonExists > 0){
+      if (loaded > 0)
+      {
+        startButtonPressed()
+      }
+
+    }
+    else {
+      lasttouchx = touches[0].x
     lasttouchy = touches[0].y
     if (touches.length == 2) {//check if two fingers touched screen
       dist1 = Math.hypot( //get rough estimate of distance between two fingers
       touches[0].x - touches[1].x,
       touches[0].y - touches[1].y);
   }
+    }
   }
   function touchMoved(event) {
     // textStatusContent = "touchmoved"
@@ -234,4 +237,20 @@ function draw() {
     var scale = (to[1] - to[0]) / (from[1] - from[0]);
     var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
     return ~~(capped * scale + to[0]);
+  }
+
+  function startButtonPressed(){
+    button.remove();
+    buttonExists = 0
+    gameStarted = true; 
+    
+    vid.loop(1); 
+    vid.volume(0)
+    bandPass = new p5.BandPass()
+    bandPass.freq(8000)
+    bandPass.res(1)
+    // lowPass.freq(100)
+    song.disconnect()
+    song.connect(bandPass)
+    song.play()
   }
